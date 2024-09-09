@@ -98,7 +98,7 @@
             let existingBubble = bubbles.find(bubble => bubble.donorName === donorName);
             if (existingBubble) {
                 // Si la bulle existe, on augmente sa taille
-                existingBubble.size += donationAmount; // Augmente la taille en fonction du montant du don
+                existingBubble.size += donationAmount * 0.5; // Réduit l'effet de croissance pour éviter les bulles trop grandes
                 existingBubble.totalDonation += donationAmount; // Met à jour le montant total du don
             } else {
                 // Sinon, crée une nouvelle bulle
@@ -106,7 +106,7 @@
                 const bubble = {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: 30 + donationAmount, // Taille de base plus le montant du don
+                    size: 20 + donationAmount * 0.5, // Taille de base réduite et augmentation réduite
                     totalDonation: donationAmount, // Montant total du don
                     donorName: donorName,
                     color: color,
@@ -168,34 +168,9 @@
             });
         }
 
-        // Fonction pour détecter et gérer les collisions entre bulles
-        function handleCollisions() {
-            for (let i = 0; i < bubbles.length; i++) {
-                for (let j = i + 1; j < bubbles.length; j++) {
-                    const bubble1 = bubbles[i];
-                    const bubble2 = bubbles[j];
-                    const dx = bubble1.x - bubble2.x;
-                    const dy = bubble1.y - bubble2.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    // Vérifier si les bulles se chevauchent
-                    if (distance < bubble1.size + bubble2.size) {
-                        // Inverser la direction des bulles pour simuler un rebond
-                        bubble1.dx = -bubble1.dx;
-                        bubble1.dy = -bubble1.dy;
-                        bubble2.dx = -bubble2.dx;
-                        bubble2.dy = -bubble2.dy;
-                    }
-                }
-            }
-        }
-
         // Fonction pour mettre à jour et dessiner les bulles
         function updateBubbles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
-
-            // Gérer les collisions entre les bulles
-            handleCollisions();
 
             bubbles.forEach((bubble) => {
                 bubble.x += bubble.dx; // Déplacement horizontal
@@ -221,11 +196,12 @@
                 ctx.fill();
                 ctx.closePath();
                 
-                // Ajouter le nom du donateur avec l'emoji
+                // Ajouter le nom du donateur avec l'emoji au centre de la bulle
                 ctx.fillStyle = 'black';
                 ctx.font = 'bold 14px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(bubble.emoji + ' ' + bubble.donorName, bubble.x, bubble.y - bubble.size - 10);
+                ctx.textBaseline = 'middle'; // Centrer verticalement
+                ctx.fillText(bubble.emoji + ' ' + bubble.donorName, bubble.x, bubble.y);
             });
 
             requestAnimationFrame(updateBubbles); // Continuer l'animation
