@@ -105,7 +105,6 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: 30 + donationAmount, // Taille de base plus le montant du don
-                    growthRate: 0.1 + donationAmount / 100,
                     donorName: donorName,
                     color: color,
                     dx: (Math.random() - 0.5) * 2, // Vitesse horizontale aléatoire
@@ -147,4 +146,37 @@
         }
 
         // Fonction pour mettre à jour et dessiner les bulles
-        function updateB
+        function updateBubbles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+            bubbles.forEach((bubble) => {
+                bubble.x += bubble.dx; // Déplacement horizontal
+                bubble.y += bubble.dy; // Déplacement vertical
+
+                // Gérer les rebonds
+                if (bubble.x + bubble.size > canvas.width || bubble.x - bubble.size < 0) {
+                    bubble.dx = -bubble.dx;
+                }
+                if (bubble.y + bubble.size > canvas.height || bubble.y - bubble.size < 0) {
+                    bubble.dy = -bubble.dy;
+                }
+
+                // Dessiner la bulle
+                ctx.beginPath();
+                ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+                ctx.fillStyle = bubble.color;
+                ctx.fill();
+                ctx.closePath();
+                
+                // Ajouter le nom du donateur (sans le montant)
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(bubble.donorName, bubble.x, bubble.y);
+            });
+            requestAnimationFrame(updateBubbles); // Continuer l'animation
+        }
+
+        updateBubbles(); // Commencer l'animation
+    </script>
+</body>
+</html>
