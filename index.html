@@ -93,12 +93,13 @@
         }
 
         // Fonction pour créer une nouvelle bulle ou agrandir une bulle existante
-        function createOrGrowBubble(donorName, donationAmount, emoji) {
+        function createOrGrowBubble(donorName, donationAmount) {
             // Vérifie si une bulle avec ce nom existe déjà
             let existingBubble = bubbles.find(bubble => bubble.donorName === donorName);
             if (existingBubble) {
                 // Si la bulle existe, on augmente sa taille
                 existingBubble.size += donationAmount; // Augmente la taille en fonction du montant du don
+                existingBubble.totalDonation += donationAmount; // Met à jour le montant total du don
             } else {
                 // Sinon, crée une nouvelle bulle
                 const color = getRandomFlashyColor();
@@ -106,14 +107,18 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: 30 + donationAmount, // Taille de base plus le montant du don
+                    totalDonation: donationAmount, // Montant total du don
                     donorName: donorName,
                     color: color,
                     dx: (Math.random() - 0.5) * 2, // Vitesse horizontale aléatoire
                     dy: (Math.random() - 0.5) * 2,  // Vitesse verticale aléatoire
-                    emoji: emoji // Ajouter l'emoji
+                    emoji: '' // Emoji par défaut
                 };
                 bubbles.push(bubble);
             }
+
+            // Met à jour les emojis après chaque ajout de don
+            updateEmojis();
         }
 
         // Fonction pour ajouter une bulle à partir du formulaire
@@ -123,12 +128,11 @@
                 document.getElementById('donorName2').value.trim(),
                 document.getElementById('donorName3').value.trim()
             ];
-            const emojis = ['👑', '🥈', '🥉']; // Emojis pour les trois donateurs
             const donationAmount = parseFloat(document.getElementById('donationAmount').value);
 
-            donorNames.forEach((donorName, index) => {
+            donorNames.forEach(donorName => {
                 if (donorName && !isNaN(donationAmount) && donationAmount > 0) {
-                    createOrGrowBubble(donorName, donationAmount, emojis[index]);
+                    createOrGrowBubble(donorName, donationAmount);
                 }
             });
 
@@ -148,6 +152,20 @@
             if (input.value === input.placeholder) {
                 input.value = '';
             }
+        }
+
+        // Fonction pour mettre à jour les emojis en fonction du classement des donateurs
+        function updateEmojis() {
+            // Trie les bulles par montant total de don décroissant
+            bubbles.sort((a, b) => b.totalDonation - a.totalDonation);
+            
+            // Définir les emojis
+            const emojis = ['👑', '🥈', '🥉'];
+
+            // Assigner les emojis selon le classement
+            bubbles.forEach((bubble, index) => {
+                bubble.emoji = emojis[index] || ''; // Attribue les emojis ou vide si non dans le top 3
+            });
         }
 
         // Fonction pour détecter et gérer les collisions entre bulles
