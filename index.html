@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu des Bulles</title>
+    <style>
+        /* Styles CSS pour le jeu */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        #donationForm {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Formulaire pour entrer les dons -->
+    <div id="donationForm">
+        <label for="donorName1">Nom du donateur 1 :</label>
+        <input type="text" id="donorName1" placeholder="Nom du donateur 1">
+        <label for="donorName2">Nom du donateur 2 :</label>
+        <input type="text" id="donorName2" placeholder="Nom du donateur 2">
+        <label for="donorName3">Nom du donateur 3 :</label>
+        <input type="text" id="donorName3" placeholder="Nom du donateur 3"><br>
+        <label for="donationAmount">Montant du don :</label>
+        <input type="number" id="donationAmount" min="1" step="1" placeholder="Montant">
+        <button onclick="addDonation()">Ajouter une bulle</button>
+        <button onclick="resetBubbles()">Réinitialiser</button>
+    </div>
+
+    <!-- Canvas pour afficher les bulles -->
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        // JavaScript pour le jeu de bulles
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const bubbles = [];
+
+        // Génère une couleur aléatoire
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Fonction pour créer une nouvelle bulle
+        function createBubble(donorName, donationAmount) {
+            const color = getRandomColor();
+            const bubble = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: donationAmount,
+                growthRate: 0.1 + donationAmount / 100,
+                donorName: donorName,
+                donationAmount: donationAmount,
+                color: color,
+                dx: (Math.random() - 0.5) * 2, // Vitesse horizontale aléatoire
+                dy: (Math.random() - 0.5) * 2  // Vitesse verticale aléatoire
+            };
+            bubbles.push(bubble);
+        }
+
+        // Fonction pour ajouter une bulle à partir du formulaire
+        function addDonation() {
+            const donorNames = [
+                document.getElementById('donorName1').value.trim(),
+                document.getElementById('donorName2').value.trim(),
+                document.getElementById('donorName3').value.trim()
+            ];
+            const donationAmount = parseFloat(document.getElementById('donationAmount').value);
+
+            donorNames.forEach(donorName => {
+                if (donorName && !isNaN(donationAmount) && donationAmount > 0) {
+                    createBubble(donorName, donationAmount);
+                }
+            });
+
+            document.getElementById('donorName1').value = '';
+            document.getElementById('donorName2').value = '';
+            document.getElementById('donorName3').value = '';
+            document.getElementById('donationAmount').value = ''; 
+        }
+
+        // Fonction pour réinitialiser les bulles
+        function resetBubbles() {
+            bubbles.length = 0; // Réinitialiser le tableau des bulles
+        }
+
+        // Fonction pour mettre à jour et dessiner les bulles
+        function updateBubbles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+            bubbles.forEach((bubble) => {
+                bubble.x += bubble.dx; // Déplacement horizontal
+                bubble.y += bubble.dy; // Déplacement vertical
+
+                // Gérer les rebonds
+                if (bubble.x + bubble.size > canvas.width || bubble.x - bubble.size < 0) {
+                    bubble.dx = -bubble.dx;
+                }
+                if (bubble.y + bubble.size > canvas.height || bubble.y - bubble.size < 0) {
+                    bubble.dy = -bubble.dy;
+                }
+
+                // Dessiner la bulle
+                ctx.beginPath();
+                ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+                ctx.fillStyle = bubble.color;
+                ctx.fill();
+                ctx.closePath();
+                
+                // Ajouter le texte du donateur et du montant
+                ctx.fillStyle = 'black';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${bubble.donorName}: ${bubble.donationAmount}€`, bubble.x, bubble.y);
+            });
+            requestAnimationFrame(updateBubbles); // Continuer l'animation
+        }
+
+        updateBubbles(); // Commencer l'animation
+    </script>
+</body>
+</html>
