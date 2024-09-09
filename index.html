@@ -22,12 +22,13 @@
             font-size: 36px;
             margin: 20px 0;
             color: #333;
+            text-decoration: underline; /* Souligné */
         }
 
         h2 {
             font-size: 24px;
             margin: 10px 0;
-            color: #555;
+            color: red; /* Texte en rouge */
         }
 
         canvas {
@@ -64,12 +65,12 @@
 
     <!-- Formulaire pour entrer les dons -->
     <div id="donationForm">
-        <label for="donorName1">Nom du donateur 1 :</label>
-        <input type="text" id="donorName1" placeholder="Nom du donateur 1" onclick="clearInput(this)">
-        <label for="donorName2">Nom du donateur 2 :</label>
-        <input type="text" id="donorName2" placeholder="Nom du donateur 2" onclick="clearInput(this)">
-        <label for="donorName3">Nom du donateur 3 :</label>
-        <input type="text" id="donorName3" placeholder="Nom du donateur 3" onclick="clearInput(this)"><br>
+        <label for="donorName1">Nom 1 :</label>
+        <input type="text" id="donorName1" placeholder="Nom 1" onclick="clearInput(this)">
+        <label for="donorName2">Nom 2 :</label>
+        <input type="text" id="donorName2" placeholder="Nom 2" onclick="clearInput(this)">
+        <label for="donorName3">Nom 3 :</label>
+        <input type="text" id="donorName3" placeholder="Nom 3" onclick="clearInput(this)"><br>
         <label for="donationAmount">Montant du don :</label>
         <input type="number" id="donationAmount" min="1" step="1" placeholder="Montant">
         <button onclick="addDonation()">Ajouter une bulle</button>
@@ -92,7 +93,7 @@
         }
 
         // Fonction pour créer une nouvelle bulle ou agrandir une bulle existante
-        function createOrGrowBubble(donorName, donationAmount) {
+        function createOrGrowBubble(donorName, donationAmount, emoji) {
             // Vérifie si une bulle avec ce nom existe déjà
             let existingBubble = bubbles.find(bubble => bubble.donorName === donorName);
             if (existingBubble) {
@@ -108,7 +109,8 @@
                     donorName: donorName,
                     color: color,
                     dx: (Math.random() - 0.5) * 2, // Vitesse horizontale aléatoire
-                    dy: (Math.random() - 0.5) * 2  // Vitesse verticale aléatoire
+                    dy: (Math.random() - 0.5) * 2,  // Vitesse verticale aléatoire
+                    emoji: emoji // Ajouter l'emoji
                 };
                 bubbles.push(bubble);
             }
@@ -121,17 +123,18 @@
                 document.getElementById('donorName2').value.trim(),
                 document.getElementById('donorName3').value.trim()
             ];
+            const emojis = ['👑', '🥈', '🥉']; // Emojis pour les trois donateurs
             const donationAmount = parseFloat(document.getElementById('donationAmount').value);
 
-            donorNames.forEach(donorName => {
+            donorNames.forEach((donorName, index) => {
                 if (donorName && !isNaN(donationAmount) && donationAmount > 0) {
-                    createOrGrowBubble(donorName, donationAmount);
+                    createOrGrowBubble(donorName, donationAmount, emojis[index]);
                 }
             });
 
-            document.getElementById('donorName1').value = '';
-            document.getElementById('donorName2').value = '';
-            document.getElementById('donorName3').value = '';
+            document.getElementById('donorName1').value = donorNames[0];
+            document.getElementById('donorName2').value = donorNames[1];
+            document.getElementById('donorName3').value = donorNames[2];
             document.getElementById('donationAmount').value = ''; 
         }
 
@@ -142,22 +145,55 @@
 
         // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
         function clearInput(input) {
-            input.value = '';
+            if (input.value === input.placeholder) {
+                input.value = '';
+            }
+        }
+
+        // Fonction pour détecter et gérer les collisions entre bulles
+        function handleCollisions() {
+            for (let i = 0; i < bubbles.length; i++) {
+                for (let j = i + 1; j < bubbles.length; j++) {
+                    const bubble1 = bubbles[i];
+                    const bubble2 = bubbles[j];
+                    const dx = bubble1.x - bubble2.x;
+                    const dy = bubble1.y - bubble2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Vérifier si les bulles se chevauchent
+                    if (distance < bubble1.size + bubble2.size) {
+                        // Inverser la direction des bulles pour simuler un rebond
+                        bubble1.dx = -bubble1.dx;
+                        bubble1.dy = -bubble1.dy;
+                        bubble2.dx = -bubble2.dx;
+                        bubble2.dy = -bubble2.dy;
+                    }
+                }
+            }
         }
 
         // Fonction pour mettre à jour et dessiner les bulles
         function updateBubbles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+
+            // Gérer les collisions entre les bulles
+            handleCollisions();
+
             bubbles.forEach((bubble) => {
                 bubble.x += bubble.dx; // Déplacement horizontal
                 bubble.y += bubble.dy; // Déplacement vertical
 
-                // Gérer les rebonds
-                if (bubble.x + bubble.size > canvas.width || bubble.x - bubble.size < 0) {
-                    bubble.dx = -bubble.dx;
+                // Gérer les rebonds en prenant en compte la taille des bulles
+                if (bubble.x + bubble.size > canvas.width) {
+                    bubble.dx = -Math.abs(bubble.dx); // Rebondir vers la gauche
+                } else if (bubble.x - bubble.size < 0) {
+                    bubble.dx = Math.abs(bubble.dx); // Rebondir vers la droite
                 }
-                if (bubble.y + bubble.size > canvas.height || bubble.y - bubble.size < 0) {
-                    bubble.dy = -bubble.dy;
+
+                if (bubble.y + bubble.size > canvas.height) {
+                    bubble.dy = -Math.abs(bubble.dy); // Rebondir vers le haut
+                } else if (bubble.y - bubble.size < 0) {
+                    bubble.dy = Math.abs(bubble.dy); // Rebondir vers le bas
                 }
 
                 // Dessiner la bulle
@@ -167,12 +203,13 @@
                 ctx.fill();
                 ctx.closePath();
                 
-                // Ajouter le nom du donateur (sans le montant)
+                // Ajouter le nom du donateur avec l'emoji
                 ctx.fillStyle = 'black';
                 ctx.font = 'bold 14px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(bubble.donorName, bubble.x, bubble.y);
+                ctx.fillText(bubble.emoji + ' ' + bubble.donorName, bubble.x, bubble.y - bubble.size - 10);
             });
+
             requestAnimationFrame(updateBubbles); // Continuer l'animation
         }
 
