@@ -14,7 +14,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: 100vh;
+            height: 100vh; /* Utiliser 100% de la hauteur de la fenêtre */
             margin: 0;
             padding: 0;
             overflow: hidden; /* Empêche le défilement de la page */
@@ -75,7 +75,7 @@
             border: 1px solid #ddd;
             background-color: white;
             width: 95%; /* Ajuste la largeur */
-            height: 400px; /* Ajuste la hauteur du canvas pour éviter le zoom excessif */
+            height: calc(100vh - 180px); /* Hauteur dynamique pour occuper tout l'espace restant */
         }
 
         #donationForm {
@@ -152,7 +152,7 @@
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas" width="800" height="400"></canvas> <!-- Rétablir la taille d'origine -->
+            <canvas id="gameCanvas"></canvas>
         </div>
     </div>
 
