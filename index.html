@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeu des Bulles</title>
     <style>
+        /* Importation de la police Glowworm MN */
+        @font-face {
+            font-family: 'Glowworm MN';
+            src: url('https://fonts.cdnfonts.com/s/13018/GlowwormMN.woff') format('woff');
+        }
+
         /* Styles CSS pour le jeu */
         body {
             font-family: Arial, sans-serif;
@@ -19,9 +25,10 @@
         }
 
         h1 {
+            font-family: 'Glowworm MN', sans-serif; /* Utilisation de la police Glowworm MN */
             font-size: 36px;
             margin: 20px 0;
-            color: #333;
+            color: #FF69B4; /* Texte en rose */
             text-decoration: underline; /* Souligné */
         }
 
@@ -33,16 +40,18 @@
 
         .container {
             display: flex;
+            flex-direction: row;
             align-items: flex-start;
             justify-content: center;
             width: 100%;
+            max-width: 1000px;
         }
 
-        #gameArea {
+        #formArea {
+            margin-right: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            margin-right: 20px;
+            align-items: flex-start;
         }
 
         #leaderboard {
@@ -67,8 +76,8 @@
         }
 
         #donationForm {
-            text-align: center;
             margin-top: 20px;
+            text-align: left;
         }
 
         input, button {
@@ -93,50 +102,54 @@
     <h2>Cadeau = bulle qui grossit</h2>
 
     <div class="container">
-        <!-- Zone de jeu -->
-        <div id="gameArea">
+        <!-- Formulaire et tableau des meilleurs joueurs -->
+        <div id="formArea">
             <!-- Formulaire pour entrer les dons -->
             <div id="donationForm">
                 <label for="donorName">Nom :</label>
                 <input type="text" id="donorName" placeholder="Nom" onclick="clearInput(this)">
+                <br>
                 <label for="donationAmount">Montant du don :</label>
                 <input type="number" id="donationAmount" min="0" step="1" value="0" placeholder="Montant">
                 <button onclick="addDonation()">Ajouter une bulle</button>
                 <button onclick="resetBubbles()">Réinitialiser</button>
             </div>
-            <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <!-- Tableau des meilleurs joueurs -->
+            <div id="leaderboard">
+                <h3>Meilleurs Joueurs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Classement</th>
+                            <th>Joueur</th>
+                            <th>Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td>1 <span>👑</span></td>
+                            <td id="firstPlayer">Aucun</td>
+                            <td id="firstAmount">0</td>
+                        </tr>
+                        <tr>
+                            <td>2 <span>🥈</span></td>
+                            <td id="secondPlayer">Aucun</td>
+                            <td id="secondAmount">0</td>
+                        </tr>
+                        <tr>
+                            <td>3 <span>🥉</span></td>
+                            <td id="thirdPlayer">Aucun</td>
+                            <td id="thirdAmount">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Tableau des meilleurs joueurs -->
-        <div id="leaderboard">
-            <h3>Meilleurs Joueurs</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Classement</th>
-                        <th>Joueur</th>
-                        <th>Montant</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                    <tr>
-                        <td>1 <span>👑</span></td>
-                        <td id="firstPlayer">Aucun</td>
-                        <td id="firstAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>2 <span>🥈</span></td>
-                        <td id="secondPlayer">Aucun</td>
-                        <td id="secondAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>3 <span>🥉</span></td>
-                        <td id="thirdPlayer">Aucun</td>
-                        <td id="thirdAmount">0</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Zone de jeu -->
+        <div id="gameArea">
+            <!-- Canvas pour afficher les bulles -->
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
         </div>
     </div>
 
@@ -191,7 +204,7 @@
                 createOrGrowBubble(donorName, donationAmount);
             }
 
-            document.getElementById('donorName').value = donorName; // Conserve le nom saisi
+            document.getElementById('donorName').value = ''; // Supprime le nom saisi après l'ajout
             document.getElementById('donationAmount').value = '0'; // Réinitialise le montant à zéro
         }
 
@@ -203,9 +216,7 @@
 
         // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
         function clearInput(input) {
-            if (input.value === input.placeholder) {
-                input.value = '';
-            }
+            input.value = '';
         }
 
         // Fonction pour mettre à jour les emojis en fonction du classement des donateurs
