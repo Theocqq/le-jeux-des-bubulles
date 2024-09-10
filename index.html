@@ -83,20 +83,20 @@
             text-align: center;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 10px; /* Réduit l'espacement entre les ensembles */
         }
 
         .donation-fields {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px; /* Réduit la marge */
         }
 
         input, button {
             margin: 2px;
-            padding: 4px; /* Réduit l'espacement intérieur */
-            font-size: 14px; /* Taille de police ajustée */
+            padding: 2px 6px; /* Taille réduite des champs et boutons */
+            font-size: 12px; /* Taille de police réduite */
         }
 
         button {
@@ -104,16 +104,17 @@
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px; /* Taille réduite du bouton */
         }
 
         #resetButton {
-            margin-left: 20px; /* Espacement entre le bouton de réinitialisation et les champs */
+            padding: 2px 6px; /* Réduit la taille du bouton de réinitialisation */
+            font-size: 12px; /* Taille de police réduite */
         }
 
         .bold-text {
             font-weight: bold; /* Nom du joueur plus gras */
-            font-size: 16px; /* Augmenter la taille de la police pour le nom du joueur */
+            font-size: 14px; /* Taille ajustée pour le nom du joueur */
         }
     </style>
 </head>
@@ -163,7 +164,6 @@
             <div class="donation-fields">
                 <label for="donorName1">Nom :</label>
                 <input type="text" id="donorName1" placeholder="Nom" onclick="clearInput(this)">
-                <br>
                 <label for="donationAmount1">Cadeaux :</label>
                 <input type="number" id="donationAmount1" min="0" step="1" value="0" placeholder="Cadeaux">
                 <button onclick="addDonation(1)">+</button>
@@ -173,7 +173,6 @@
             <div class="donation-fields">
                 <label for="donorName2">Nom :</label>
                 <input type="text" id="donorName2" placeholder="Nom" onclick="clearInput(this)">
-                <br>
                 <label for="donationAmount2">Cadeaux :</label>
                 <input type="number" id="donationAmount2" min="0" step="1" value="0" placeholder="Cadeaux">
                 <button onclick="addDonation(2)">+</button>
@@ -183,7 +182,6 @@
             <div class="donation-fields">
                 <label for="donorName3">Nom :</label>
                 <input type="text" id="donorName3" placeholder="Nom" onclick="clearInput(this)">
-                <br>
                 <label for="donationAmount3">Cadeaux :</label>
                 <input type="number" id="donationAmount3" min="0" step="1" value="0" placeholder="Cadeaux">
                 <button onclick="addDonation(3)">+</button>
