@@ -79,14 +79,24 @@
         }
 
         #donationForm {
-            margin-top: 3px;
+            margin-top: 10px;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .donation-fields {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         input, button {
             margin: 2px;
             padding: 4px; /* Réduit l'espacement intérieur */
-            font-size: 12px; /* Taille de police réduite */
+            font-size: 14px; /* Taille de police ajustée */
         }
 
         button {
@@ -95,6 +105,15 @@
             color: white;
             border: none;
             border-radius: 5px;
+        }
+
+        #resetButton {
+            margin-left: 20px; /* Espacement entre le bouton de réinitialisation et les champs */
+        }
+
+        .bold-text {
+            font-weight: bold; /* Nom du joueur plus gras */
+            font-size: 16px; /* Augmenter la taille de la police pour le nom du joueur */
         }
     </style>
 </head>
@@ -115,23 +134,23 @@
                     <tr>
                         <th>Classement</th>
                         <th>Joueur</th>
-                        <th>Montant</th>
+                        <th>Cadeaux</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboardBody">
                     <tr>
-                        <td>1 <span>👑</span></td>
-                        <td id="firstPlayer">Aucun</td>
+                        <td>1 <span class="bold-text">👑</span></td>
+                        <td id="firstPlayer" class="bold-text">Aucun</td>
                         <td id="firstAmount">0</td>
                     </tr>
                     <tr>
-                        <td>2 <span>🥈</span></td>
-                        <td id="secondPlayer">Aucun</td>
+                        <td>2 <span class="bold-text">🥈</span></td>
+                        <td id="secondPlayer" class="bold-text">Aucun</td>
                         <td id="secondAmount">0</td>
                     </tr>
                     <tr>
-                        <td>3 <span>🥉</span></td>
-                        <td id="thirdPlayer">Aucun</td>
+                        <td>3 <span class="bold-text">🥉</span></td>
+                        <td id="thirdPlayer" class="bold-text">Aucun</td>
                         <td id="thirdAmount">0</td>
                     </tr>
                 </tbody>
@@ -140,19 +159,44 @@
 
         <!-- Formulaire pour entrer les dons -->
         <div id="donationForm">
-            <label for="donorName">Nom :</label>
-            <input type="text" id="donorName" placeholder="Nom" onclick="clearInput(this)">
-            <br>
-            <label for="donationAmount">Montant du don :</label>
-            <input type="number" id="donationAmount" min="0" step="1" value="0" placeholder="Montant">
-            <button onclick="addDonation()">Ajouter une bulle</button>
-            <button onclick="resetBubbles()">Réinitialiser</button>
+            <!-- Ensemble 1 -->
+            <div class="donation-fields">
+                <label for="donorName1">Nom :</label>
+                <input type="text" id="donorName1" placeholder="Nom" onclick="clearInput(this)">
+                <br>
+                <label for="donationAmount1">Cadeaux :</label>
+                <input type="number" id="donationAmount1" min="0" step="1" value="0" placeholder="Cadeaux">
+                <button onclick="addDonation(1)">+</button>
+            </div>
+
+            <!-- Ensemble 2 -->
+            <div class="donation-fields">
+                <label for="donorName2">Nom :</label>
+                <input type="text" id="donorName2" placeholder="Nom" onclick="clearInput(this)">
+                <br>
+                <label for="donationAmount2">Cadeaux :</label>
+                <input type="number" id="donationAmount2" min="0" step="1" value="0" placeholder="Cadeaux">
+                <button onclick="addDonation(2)">+</button>
+            </div>
+
+            <!-- Ensemble 3 -->
+            <div class="donation-fields">
+                <label for="donorName3">Nom :</label>
+                <input type="text" id="donorName3" placeholder="Nom" onclick="clearInput(this)">
+                <br>
+                <label for="donationAmount3">Cadeaux :</label>
+                <input type="number" id="donationAmount3" min="0" step="1" value="0" placeholder="Cadeaux">
+                <button onclick="addDonation(3)">+</button>
+            </div>
+
+            <!-- Bouton Réinitialiser -->
+            <button id="resetButton" onclick="resetBubbles()">Réinitialiser</button>
         </div>
 
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas" width="800" height="400"></canvas> <!-- Fixe la taille du canvas pour éviter le zoom -->
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
         </div>
     </div>
 
@@ -170,51 +214,47 @@
 
         // Fonction pour créer une nouvelle bulle ou agrandir une bulle existante
         function createOrGrowBubble(donorName, donationAmount) {
-            // Vérifie si une bulle avec ce nom existe déjà
             let existingBubble = bubbles.find(bubble => bubble.donorName === donorName);
             if (existingBubble) {
-                // Si la bulle existe, on augmente sa taille
-                existingBubble.size += donationAmount > 0 ? donationAmount * 0.8 : 5; // Plus grande différence pour les dons supérieurs à zéro
-                existingBubble.totalDonation += donationAmount; // Met à jour le montant total du don
+                existingBubble.size += donationAmount > 0 ? donationAmount * 0.8 : 5; // Augmenter la taille de la bulle
+                existingBubble.totalDonation += donationAmount;
             } else {
-                // Sinon, crée une nouvelle bulle
                 const color = getRandomFlashyColor();
                 const bubble = {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: donationAmount > 0 ? 20 + donationAmount * 0.8 : 10, // Taille plus petite pour un don de zéro
-                    totalDonation: donationAmount, // Montant total du don
+                    size: donationAmount > 0 ? 20 + donationAmount * 0.8 : 10,
+                    totalDonation: donationAmount,
                     donorName: donorName,
                     color: color,
-                    dx: (Math.random() - 0.5) * 2, // Vitesse horizontale aléatoire
-                    dy: (Math.random() - 0.5) * 2,  // Vitesse verticale aléatoire
-                    emoji: '' // Emoji par défaut
+                    dx: (Math.random() - 0.5) * 2,
+                    dy: (Math.random() - 0.5) * 2,
+                    emoji: ''
                 };
                 bubbles.push(bubble);
             }
 
-            // Met à jour les emojis et le tableau des meilleurs joueurs après chaque ajout de don
             updateEmojis();
             updateLeaderboard();
         }
 
         // Fonction pour ajouter une bulle à partir du formulaire
-        function addDonation() {
-            const donorName = document.getElementById('donorName').value.trim();
-            const donationAmount = parseFloat(document.getElementById('donationAmount').value);
+        function addDonation(index) {
+            const donorName = document.getElementById(`donorName${index}`).value.trim();
+            const donationAmount = parseFloat(document.getElementById(`donationAmount${index}`).value);
 
             if (donorName && !isNaN(donationAmount)) {
                 createOrGrowBubble(donorName, donationAmount);
             }
 
-            document.getElementById('donorName').value = ''; // Supprime le nom saisi après l'ajout
-            document.getElementById('donationAmount').value = '0'; // Réinitialise le montant à zéro
+            document.getElementById(`donorName${index}`).value = '';
+            document.getElementById(`donationAmount${index}`).value = '0';
         }
 
         // Fonction pour réinitialiser les bulles
         function resetBubbles() {
-            bubbles.length = 0; // Réinitialiser le tableau des bulles
-            updateLeaderboard(); // Réinitialiser le tableau des meilleurs joueurs
+            bubbles.length = 0;
+            updateLeaderboard();
         }
 
         // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
@@ -224,15 +264,10 @@
 
         // Fonction pour mettre à jour les emojis en fonction du classement des donateurs
         function updateEmojis() {
-            // Trie les bulles par montant total de don décroissant
             bubbles.sort((a, b) => b.totalDonation - a.totalDonation);
-            
-            // Définir les emojis
             const emojis = ['👑', '🥈', '🥉'];
-
-            // Assigner les emojis selon le classement
             bubbles.forEach((bubble, index) => {
-                bubble.emoji = emojis[index] || ''; // Attribue les emojis ou vide si non dans le top 3
+                bubble.emoji = emojis[index] || '';
             });
         }
 
@@ -240,7 +275,6 @@
         function updateLeaderboard() {
             const sortedBubbles = bubbles.sort((a, b) => b.totalDonation - a.totalDonation);
 
-            // Met à jour le tableau avec les 3 meilleurs joueurs
             document.getElementById('firstPlayer').textContent = sortedBubbles[0] ? sortedBubbles[0].donorName : 'Aucun';
             document.getElementById('firstAmount').textContent = sortedBubbles[0] ? sortedBubbles[0].totalDonation : '0';
 
@@ -253,26 +287,24 @@
 
         // Fonction pour mettre à jour et dessiner les bulles
         function updateBubbles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             bubbles.forEach((bubble) => {
-                bubble.x += bubble.dx; // Déplacement horizontal
-                bubble.y += bubble.dy; // Déplacement vertical
+                bubble.x += bubble.dx;
+                bubble.y += bubble.dy;
 
-                // Gérer les rebonds en prenant en compte la taille des bulles
                 if (bubble.x + bubble.size > canvas.width) {
-                    bubble.dx = -Math.abs(bubble.dx); // Rebondir vers la gauche
+                    bubble.dx = -Math.abs(bubble.dx);
                 } else if (bubble.x - bubble.size < 0) {
-                    bubble.dx = Math.abs(bubble.dx); // Rebondir vers la droite
+                    bubble.dx = Math.abs(bubble.dx);
                 }
 
                 if (bubble.y + bubble.size > canvas.height) {
-                    bubble.dy = -Math.abs(bubble.dy); // Rebondir vers le haut
+                    bubble.dy = -Math.abs(bubble.dy);
                 } else if (bubble.y - bubble.size < 0) {
-                    bubble.dy = Math.abs(bubble.dy); // Rebondir vers le bas
+                    bubble.dy = Math.abs(bubble.dy);
                 }
 
-                // Dessiner la bulle
                 ctx.beginPath();
                 ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 ctx.fillStyle = bubble.color;
@@ -281,13 +313,13 @@
                 
                 // Ajouter le nom du donateur avec l'emoji au centre de la bulle
                 ctx.fillStyle = 'black';
-                ctx.font = '14px Arial'; // Taille de police ajustée pour plus de netteté
+                ctx.font = 'bold 16px Arial'; // Nom du joueur en gras et plus grand
                 ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle'; // Centrer verticalement
+                ctx.textBaseline = 'middle';
                 ctx.fillText(bubble.emoji + ' ' + bubble.donorName, bubble.x, bubble.y);
             });
 
-            requestAnimationFrame(updateBubbles); // Continuer l'animation
+            requestAnimationFrame(updateBubbles);
         }
 
         updateBubbles(); // Commencer l'animation
