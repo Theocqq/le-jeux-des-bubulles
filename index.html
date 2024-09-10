@@ -55,13 +55,14 @@
 
         #leaderboard {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 10px; /* Ajout d'un espace pour séparer le tableau des autres éléments */
         }
 
         table {
             border-collapse: collapse;
             width: 250px; /* Réduit la largeur du tableau */
             margin: 0 auto;
+            border: 1px solid #ddd;
         }
 
         th, td {
@@ -130,6 +131,37 @@
     </h2>
 
     <div class="container">
+        <!-- Tableau des meilleurs joueurs -->
+        <div id="leaderboard">
+            <h3>Meilleurs Joueurs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Joueur</th>
+                        <th>Cadeaux</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td>1 <span class="bold-text">👑</span></td>
+                        <td id="firstPlayer" class="bold-text">Aucun</td>
+                        <td id="firstAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>2 <span class="bold-text">🥈</span></td>
+                        <td id="secondPlayer" class="bold-text">Aucun</td>
+                        <td id="secondAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>3 <span class="bold-text">🥉</span></td>
+                        <td id="thirdPlayer" class="bold-text">Aucun</td>
+                        <td id="thirdAmount">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Formulaire pour entrer les dons -->
         <div id="donationForm">
             <!-- Ensemble 1 -->
