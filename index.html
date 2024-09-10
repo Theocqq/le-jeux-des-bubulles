@@ -74,8 +74,8 @@
         canvas {
             border: 1px solid #ddd;
             background-color: white;
-            width: 95%; /* Ajuste la largeur */
-            height: calc(100vh - 180px); /* Hauteur dynamique pour occuper tout l'espace restant */
+            width: 800px; /* Fixer la largeur du canvas */
+            height: 400px; /* Fixer la hauteur du canvas */
         }
 
         #donationForm {
@@ -152,7 +152,7 @@
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas"></canvas>
+            <canvas id="gameCanvas" width="800" height="400"></canvas> <!-- Fixe la taille du canvas pour éviter le zoom -->
         </div>
     </div>
 
