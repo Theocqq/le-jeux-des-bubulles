@@ -74,8 +74,8 @@
         canvas {
             border: 1px solid #ddd;
             background-color: white;
-            width: 98%; /* Ajuste la largeur */
-            height: 60vh; /* Utilise 60% de la hauteur de la fenêtre pour maximiser l'espace de jeu */
+            width: 95%; /* Ajuste la largeur */
+            height: 400px; /* Ajuste la hauteur du canvas pour éviter le zoom excessif */
         }
 
         #donationForm {
@@ -152,7 +152,7 @@
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas"></canvas>
+            <canvas id="gameCanvas" width="800" height="400"></canvas> <!-- Rétablir la taille d'origine -->
         </div>
     </div>
 
@@ -281,7 +281,7 @@
                 
                 // Ajouter le nom du donateur avec l'emoji au centre de la bulle
                 ctx.fillStyle = 'black';
-                ctx.font = 'bold 12px Arial';
+                ctx.font = '14px Arial'; // Taille de police ajustée pour plus de netteté
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle'; // Centrer verticalement
                 ctx.fillText(bubble.emoji + ' ' + bubble.donorName, bubble.x, bubble.y);
