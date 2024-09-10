@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeu des Bulles</title>
+    <!-- Importation de la police Glowworm MN -->
+    <link href="[TON_LIEN_FONT]" rel="stylesheet"> <!-- Remplace [TON_LIEN_FONT] par le lien réel -->
     <style>
-        /* Importation de la police Glowworm MN */
-        @font-face {
-            font-family: 'Glowworm MN';
-            src: url('https://fonts.cdnfonts.com/s/13018/GlowwormMN.woff') format('woff');
-        }
-
         /* Styles CSS pour le jeu */
         body {
             font-family: Arial, sans-serif;
@@ -20,21 +16,23 @@
             justify-content: flex-start;
             height: 100vh;
             margin: 0;
+            padding: 0;
+            overflow: hidden; /* Empêche le défilement de la page */
             background-color: #f0f0f0;
             text-align: center;
         }
 
         h1 {
             font-family: 'Glowworm MN', sans-serif; /* Utilisation de la police Glowworm MN */
-            font-size: 36px;
-            margin: 20px 0;
+            font-size: 28px; /* Taille de police réduite */
+            margin: 10px 0;
             color: #FF69B4; /* Texte en rose */
             text-decoration: underline; /* Souligné */
         }
 
         h2 {
-            font-size: 24px;
-            margin: 10px 0;
+            font-size: 18px; /* Taille de police réduite */
+            margin: 5px 0;
             color: red; /* Texte en rouge */
             display: flex;
             align-items: center;
@@ -42,7 +40,7 @@
         }
 
         .emoji {
-            margin: 0 5px;
+            margin: 0 3px;
         }
 
         .container {
@@ -55,36 +53,40 @@
         }
 
         #leaderboard {
-            text-align: left;
-            margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 10px;
         }
 
         table {
             border-collapse: collapse;
-            width: 300px;
+            width: 260px; /* Réduit la largeur du tableau */
+            margin: 0 auto;
         }
 
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 4px; /* Espacement réduit */
+            font-size: 14px; /* Taille de police réduite */
             text-align: center;
         }
 
         canvas {
             border: 1px solid #ddd;
             background-color: white;
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 95%; /* Ajuste la largeur */
+            height: 350px; /* Hauteur réduite pour tenir dans la fenêtre */
         }
 
         #donationForm {
-            margin-top: 10px;
+            margin-top: 5px;
             text-align: center;
         }
 
         input, button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 16px;
+            margin: 2px;
+            padding: 5px; /* Réduit l'espacement intérieur */
+            font-size: 14px; /* Taille de police réduite */
         }
 
         button {
@@ -150,7 +152,7 @@
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <canvas id="gameCanvas"></canvas>
         </div>
     </div>
 
