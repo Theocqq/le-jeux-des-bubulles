@@ -222,11 +222,12 @@
                 existingBubble.size += donationAmount > 0 ? donationAmount * 0.8 : 5; // Augmenter la taille de la bulle
                 existingBubble.totalDonation += donationAmount;
             } else {
+                const size = donationAmount > 0 ? 20 + donationAmount * 0.8 : 10;
                 const color = getRandomFlashyColor();
                 const bubble = {
-                    x: Math.random() * (canvas.width - 40) + 20, // Générer la position x en tenant compte de la taille
-                    y: Math.random() * (canvas.height - 40) + 20, // Générer la position y en tenant compte de la taille
-                    size: donationAmount > 0 ? 20 + donationAmount * 0.8 : 10,
+                    x: Math.random() * (canvas.width - size * 2) + size, // Générer la position x en tenant compte de la taille
+                    y: Math.random() * (canvas.height - size * 2) + size, // Générer la position y en tenant compte de la taille
+                    size: size,
                     totalDonation: donationAmount,
                     donorName: donorName,
                     color: color,
