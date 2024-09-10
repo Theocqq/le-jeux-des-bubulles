@@ -17,7 +17,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
@@ -36,32 +36,32 @@
             font-size: 24px;
             margin: 10px 0;
             color: red; /* Texte en rouge */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji {
+            margin: 0 5px;
         }
 
         .container {
             display: flex;
-            flex-direction: row;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             width: 100%;
             max-width: 1000px;
         }
 
-        #formArea {
-            margin-right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
         #leaderboard {
-            margin-left: 20px;
             text-align: left;
+            margin-bottom: 20px;
         }
 
         table {
             border-collapse: collapse;
-            width: 200px;
+            width: 300px;
         }
 
         th, td {
@@ -73,11 +73,12 @@
         canvas {
             border: 1px solid #ddd;
             background-color: white;
+            margin-top: 20px;
         }
 
         #donationForm {
-            margin-top: 20px;
-            text-align: left;
+            margin-top: 10px;
+            text-align: center;
         }
 
         input, button {
@@ -98,52 +99,52 @@
 <body>
     <!-- Titre du jeu -->
     <h1>Le Jeu des bulles</h1>
-    <!-- Description du jeu -->
-    <h2>Cadeau = bulle qui grossit</h2>
+    <!-- Description du jeu avec emojis cadeau -->
+    <h2>
+        <span class="emoji">🎁</span> Cadeau = bulle qui grossit <span class="emoji">🎁</span>
+    </h2>
 
     <div class="container">
-        <!-- Formulaire et tableau des meilleurs joueurs -->
-        <div id="formArea">
-            <!-- Formulaire pour entrer les dons -->
-            <div id="donationForm">
-                <label for="donorName">Nom :</label>
-                <input type="text" id="donorName" placeholder="Nom" onclick="clearInput(this)">
-                <br>
-                <label for="donationAmount">Montant du don :</label>
-                <input type="number" id="donationAmount" min="0" step="1" value="0" placeholder="Montant">
-                <button onclick="addDonation()">Ajouter une bulle</button>
-                <button onclick="resetBubbles()">Réinitialiser</button>
-            </div>
-            <!-- Tableau des meilleurs joueurs -->
-            <div id="leaderboard">
-                <h3>Meilleurs Joueurs</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Classement</th>
-                            <th>Joueur</th>
-                            <th>Montant</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                        <tr>
-                            <td>1 <span>👑</span></td>
-                            <td id="firstPlayer">Aucun</td>
-                            <td id="firstAmount">0</td>
-                        </tr>
-                        <tr>
-                            <td>2 <span>🥈</span></td>
-                            <td id="secondPlayer">Aucun</td>
-                            <td id="secondAmount">0</td>
-                        </tr>
-                        <tr>
-                            <td>3 <span>🥉</span></td>
-                            <td id="thirdPlayer">Aucun</td>
-                            <td id="thirdAmount">0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <!-- Tableau des meilleurs joueurs -->
+        <div id="leaderboard">
+            <h3>Meilleurs Joueurs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Joueur</th>
+                        <th>Montant</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td>1 <span>👑</span></td>
+                        <td id="firstPlayer">Aucun</td>
+                        <td id="firstAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>2 <span>🥈</span></td>
+                        <td id="secondPlayer">Aucun</td>
+                        <td id="secondAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>3 <span>🥉</span></td>
+                        <td id="thirdPlayer">Aucun</td>
+                        <td id="thirdAmount">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulaire pour entrer les dons -->
+        <div id="donationForm">
+            <label for="donorName">Nom :</label>
+            <input type="text" id="donorName" placeholder="Nom" onclick="clearInput(this)">
+            <br>
+            <label for="donationAmount">Montant du don :</label>
+            <input type="number" id="donationAmount" min="0" step="1" value="0" placeholder="Montant">
+            <button onclick="addDonation()">Ajouter une bulle</button>
+            <button onclick="resetBubbles()">Réinitialiser</button>
         </div>
 
         <!-- Zone de jeu -->
@@ -171,7 +172,7 @@
             let existingBubble = bubbles.find(bubble => bubble.donorName === donorName);
             if (existingBubble) {
                 // Si la bulle existe, on augmente sa taille
-                existingBubble.size += donationAmount * 0.5; // Réduit l'effet de croissance pour éviter les bulles trop grandes
+                existingBubble.size += donationAmount > 0 ? donationAmount * 0.8 : 5; // Plus grande différence pour les dons supérieurs à zéro
                 existingBubble.totalDonation += donationAmount; // Met à jour le montant total du don
             } else {
                 // Sinon, crée une nouvelle bulle
@@ -179,7 +180,7 @@
                 const bubble = {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: 20 + donationAmount * 0.5, // Taille de base réduite et augmentation réduite
+                    size: donationAmount > 0 ? 20 + donationAmount * 0.8 : 10, // Taille plus petite pour un don de zéro
                     totalDonation: donationAmount, // Montant total du don
                     donorName: donorName,
                     color: color,
