@@ -224,8 +224,8 @@
             } else {
                 const color = getRandomFlashyColor();
                 const bubble = {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
+                    x: Math.random() * (canvas.width - 40) + 20, // Générer la position x en tenant compte de la taille
+                    y: Math.random() * (canvas.height - 40) + 20, // Générer la position y en tenant compte de la taille
                     size: donationAmount > 0 ? 20 + donationAmount * 0.8 : 10,
                     totalDonation: donationAmount,
                     donorName: donorName,
@@ -296,16 +296,17 @@
                 bubble.x += bubble.dx;
                 bubble.y += bubble.dy;
 
-                if (bubble.x + bubble.size > canvas.width) {
-                    bubble.dx = -Math.abs(bubble.dx);
-                } else if (bubble.x - bubble.size < 0) {
-                    bubble.dx = Math.abs(bubble.dx);
+                // Gérer les rebonds en prenant en compte la taille des bulles
+                if (bubble.x + bubble.size > canvas.width / 2) {
+                    bubble.dx = -Math.abs(bubble.dx); // Rebondir vers la gauche
+                } else if (bubble.x - bubble.size < -canvas.width / 2) {
+                    bubble.dx = Math.abs(bubble.dx); // Rebondir vers la droite
                 }
 
-                if (bubble.y + bubble.size > canvas.height) {
-                    bubble.dy = -Math.abs(bubble.dy);
-                } else if (bubble.y - bubble.size < 0) {
-                    bubble.dy = Math.abs(bubble.dy);
+                if (bubble.y + bubble.size > canvas.height / 2) {
+                    bubble.dy = -Math.abs(bubble.dy); // Rebondir vers le haut
+                } else if (bubble.y - bubble.size < -canvas.height / 2) {
+                    bubble.dy = Math.abs(bubble.dy); // Rebondir vers le bas
                 }
 
                 ctx.beginPath();
