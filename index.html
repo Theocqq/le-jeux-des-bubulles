@@ -71,31 +71,27 @@
             text-align: center;
         }
 
-        canvas {
-            border: 1px solid #ddd;
-            background-color: white;
-            width: 500px; /* Fixer la largeur du canvas pour un carré */
-            height: 500px; /* Fixer la hauteur du canvas pour un carré */
-        }
-
         #donationForm {
-            margin-top: 10px;
-            text-align: center;
             display: flex;
             justify-content: center;
-            gap: 10px; /* Réduit l'espacement entre les ensembles */
+            align-items: center;
+            gap: 10px; /* Espacement entre les ensembles */
+            flex-wrap: wrap; /* Permet d'aller à la ligne si nécessaire */
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 10px;
         }
 
         .donation-fields {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 5px; /* Réduit la marge */
+            margin: 0 5px; /* Espacement réduit sur les côtés */
         }
 
         input, button {
             margin: 2px;
-            padding: 2px 6px; /* Taille réduite des champs et boutons */
+            padding: 2px 4px; /* Taille réduite des champs et boutons */
             font-size: 12px; /* Taille de police réduite */
         }
 
@@ -108,13 +104,20 @@
         }
 
         #resetButton {
-            padding: 2px 6px; /* Réduit la taille du bouton de réinitialisation */
+            padding: 2px 4px; /* Réduit la taille du bouton de réinitialisation */
             font-size: 12px; /* Taille de police réduite */
         }
 
         .bold-text {
             font-weight: bold; /* Nom du joueur plus gras */
             font-size: 14px; /* Taille ajustée pour le nom du joueur */
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            background-color: white;
+            width: 500px; /* Fixer la largeur du canvas pour un carré */
+            height: 500px; /* Fixer la hauteur du canvas pour un carré */
         }
     </style>
 </head>
@@ -127,37 +130,6 @@
     </h2>
 
     <div class="container">
-        <!-- Tableau des meilleurs joueurs -->
-        <div id="leaderboard">
-            <h3>Meilleurs Joueurs</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Classement</th>
-                        <th>Joueur</th>
-                        <th>Cadeaux</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                    <tr>
-                        <td>1 <span class="bold-text">👑</span></td>
-                        <td id="firstPlayer" class="bold-text">Aucun</td>
-                        <td id="firstAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>2 <span class="bold-text">🥈</span></td>
-                        <td id="secondPlayer" class="bold-text">Aucun</td>
-                        <td id="secondAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>3 <span class="bold-text">🥉</span></td>
-                        <td id="thirdPlayer" class="bold-text">Aucun</td>
-                        <td id="thirdAmount">0</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
         <!-- Formulaire pour entrer les dons -->
         <div id="donationForm">
             <!-- Ensemble 1 -->
