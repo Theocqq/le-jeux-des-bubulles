@@ -31,9 +31,38 @@
             color: red; /* Texte en rouge */
         }
 
+        .container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+        }
+
+        #gameArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        #leaderboard {
+            margin-left: 20px;
+            text-align: left;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 200px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
         canvas {
             border: 1px solid #ddd;
-            margin-top: 20px;
             background-color: white;
         }
 
@@ -63,22 +92,53 @@
     <!-- Description du jeu -->
     <h2>Cadeau = bulle qui grossit</h2>
 
-    <!-- Formulaire pour entrer les dons -->
-    <div id="donationForm">
-        <label for="donorName1">Nom 1 :</label>
-        <input type="text" id="donorName1" placeholder="Nom 1" onclick="clearInput(this)">
-        <label for="donorName2">Nom 2 :</label>
-        <input type="text" id="donorName2" placeholder="Nom 2" onclick="clearInput(this)">
-        <label for="donorName3">Nom 3 :</label>
-        <input type="text" id="donorName3" placeholder="Nom 3" onclick="clearInput(this)"><br>
-        <label for="donationAmount">Montant du don :</label>
-        <input type="number" id="donationAmount" min="1" step="1" placeholder="Montant">
-        <button onclick="addDonation()">Ajouter une bulle</button>
-        <button onclick="resetBubbles()">Réinitialiser</button>
-    </div>
+    <div class="container">
+        <!-- Zone de jeu -->
+        <div id="gameArea">
+            <!-- Formulaire pour entrer les dons -->
+            <div id="donationForm">
+                <label for="donorName">Nom :</label>
+                <input type="text" id="donorName" placeholder="Nom" onclick="clearInput(this)">
+                <label for="donationAmount">Montant du don :</label>
+                <input type="number" id="donationAmount" min="0" step="1" value="0" placeholder="Montant">
+                <button onclick="addDonation()">Ajouter une bulle</button>
+                <button onclick="resetBubbles()">Réinitialiser</button>
+            </div>
+            <!-- Canvas pour afficher les bulles -->
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
 
-    <!-- Canvas pour afficher les bulles -->
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <!-- Tableau des meilleurs joueurs -->
+        <div id="leaderboard">
+            <h3>Meilleurs Joueurs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Joueur</th>
+                        <th>Montant</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td>1 <span>👑</span></td>
+                        <td id="firstPlayer">Aucun</td>
+                        <td id="firstAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>2 <span>🥈</span></td>
+                        <td id="secondPlayer">Aucun</td>
+                        <td id="secondAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>3 <span>🥉</span></td>
+                        <td id="thirdPlayer">Aucun</td>
+                        <td id="thirdAmount">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         // JavaScript pour le jeu de bulles
@@ -117,34 +177,28 @@
                 bubbles.push(bubble);
             }
 
-            // Met à jour les emojis après chaque ajout de don
+            // Met à jour les emojis et le tableau des meilleurs joueurs après chaque ajout de don
             updateEmojis();
+            updateLeaderboard();
         }
 
         // Fonction pour ajouter une bulle à partir du formulaire
         function addDonation() {
-            const donorNames = [
-                document.getElementById('donorName1').value.trim(),
-                document.getElementById('donorName2').value.trim(),
-                document.getElementById('donorName3').value.trim()
-            ];
+            const donorName = document.getElementById('donorName').value.trim();
             const donationAmount = parseFloat(document.getElementById('donationAmount').value);
 
-            donorNames.forEach(donorName => {
-                if (donorName && !isNaN(donationAmount) && donationAmount > 0) {
-                    createOrGrowBubble(donorName, donationAmount);
-                }
-            });
+            if (donorName && !isNaN(donationAmount)) {
+                createOrGrowBubble(donorName, donationAmount);
+            }
 
-            document.getElementById('donorName1').value = donorNames[0];
-            document.getElementById('donorName2').value = donorNames[1];
-            document.getElementById('donorName3').value = donorNames[2];
-            document.getElementById('donationAmount').value = ''; 
+            document.getElementById('donorName').value = donorName; // Conserve le nom saisi
+            document.getElementById('donationAmount').value = '0'; // Réinitialise le montant à zéro
         }
 
         // Fonction pour réinitialiser les bulles
         function resetBubbles() {
             bubbles.length = 0; // Réinitialiser le tableau des bulles
+            updateLeaderboard(); // Réinitialiser le tableau des meilleurs joueurs
         }
 
         // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
@@ -166,6 +220,21 @@
             bubbles.forEach((bubble, index) => {
                 bubble.emoji = emojis[index] || ''; // Attribue les emojis ou vide si non dans le top 3
             });
+        }
+
+        // Fonction pour mettre à jour le tableau des meilleurs joueurs
+        function updateLeaderboard() {
+            const sortedBubbles = bubbles.sort((a, b) => b.totalDonation - a.totalDonation);
+
+            // Met à jour le tableau avec les 3 meilleurs joueurs
+            document.getElementById('firstPlayer').textContent = sortedBubbles[0] ? sortedBubbles[0].donorName : 'Aucun';
+            document.getElementById('firstAmount').textContent = sortedBubbles[0] ? sortedBubbles[0].totalDonation : '0';
+
+            document.getElementById('secondPlayer').textContent = sortedBubbles[1] ? sortedBubbles[1].donorName : 'Aucun';
+            document.getElementById('secondAmount').textContent = sortedBubbles[1] ? sortedBubbles[1].totalDonation : '0';
+
+            document.getElementById('thirdPlayer').textContent = sortedBubbles[2] ? sortedBubbles[2].donorName : 'Aucun';
+            document.getElementById('thirdAmount').textContent = sortedBubbles[2] ? sortedBubbles[2].totalDonation : '0';
         }
 
         // Fonction pour mettre à jour et dessiner les bulles
