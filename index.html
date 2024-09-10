@@ -74,8 +74,8 @@
         canvas {
             border: 1px solid #ddd;
             background-color: white;
-            width: 800px; /* Fixer la largeur du canvas */
-            height: 400px; /* Fixer la hauteur du canvas */
+            width: 500px; /* Fixer la largeur du canvas pour un carré */
+            height: 500px; /* Fixer la hauteur du canvas pour un carré */
         }
 
         #donationForm {
@@ -194,7 +194,7 @@
         <!-- Zone de jeu -->
         <div id="gameArea">
             <!-- Canvas pour afficher les bulles -->
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <canvas id="gameCanvas" width="1000" height="1000" style="width: 500px; height: 500px;"></canvas>
         </div>
     </div>
 
@@ -202,6 +202,7 @@
         // JavaScript pour le jeu de bulles
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        ctx.scale(2, 2); // Double la résolution du canvas pour plus de netteté
         const bubbles = [];
 
         // Génère une couleur flashy aléatoire
