@@ -254,23 +254,25 @@
                     dx: (Math.random() - 0.5) * 2,
                     dy: (Math.random() - 0.5) * 2,
                     emoji: '',
-                    highlight: true // Drapeau pour le clignotement initial
+                    blink: 0 // Compteur pour le clignotement
                 };
                 bubbles.push(bubble);
-                setTimeout(() => bubble.highlight = false, 1500); // Arrêter le clignotement après 1,5 seconde
+                startBlinking(bubble); // Commence le clignotement de la bulle
             }
 
             updateEmojis();
             updateLeaderboard();
         }
 
-        // Fonction pour clignoter une bulle nouvellement créée
-        function highlightNewBubble(bubble) {
-            const bubbleIndex = bubbles.indexOf(bubble);
-            bubbles[bubbleIndex].highlight = true;
-            setTimeout(() => {
-                bubbles[bubbleIndex].highlight = false;
-            }, 1500); // Clignote pendant 1,5 secondes (3 fois 0,5s)
+        // Fonction pour démarrer le clignotement d'une bulle
+        function startBlinking(bubble) {
+            const blinkInterval = setInterval(() => {
+                bubble.blink++;
+                if (bubble.blink > 6) { // Arrête après 3 alternances (6 demi-alternances)
+                    clearInterval(blinkInterval);
+                    bubble.blink = 0;
+                }
+            }, 250); // Clignote toutes les 0,25 secondes
         }
 
         // Fonction pour réinitialiser les bulles
@@ -329,7 +331,7 @@
                 }
 
                 // Alterne entre le jaune et la couleur finale de la bulle
-                ctx.fillStyle = bubble.highlight ? 'yellow' : bubble.color;
+                ctx.fillStyle = bubble.blink % 2 === 0 ? 'yellow' : bubble.color;
                 ctx.beginPath();
                 ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 ctx.fill();
