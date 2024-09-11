@@ -197,8 +197,6 @@
         const ctx = canvas.getContext('2d');
         ctx.scale(2, 2); // Double la résolution du canvas pour plus de netteté
         const bubbles = [];
-        let countdownInterval;
-        let countdownTime = 300; // 5 minutes en secondes
         let currentFieldIndex = 1;
 
         // Génère une couleur flashy aléatoire, sauf jaune
@@ -254,7 +252,8 @@
                     dx: (Math.random() - 0.5) * 2,
                     dy: (Math.random() - 0.5) * 2,
                     emoji: '',
-                    blink: 0 // Compteur pour le clignotement
+                    currentColor: 'yellow', // Couleur initiale de clignotement
+                    blinkCount: 0 // Compteur pour le clignotement
                 };
                 bubbles.push(bubble);
                 startBlinking(bubble); // Commence le clignotement de la bulle
@@ -267,10 +266,11 @@
         // Fonction pour démarrer le clignotement d'une bulle
         function startBlinking(bubble) {
             const blinkInterval = setInterval(() => {
-                bubble.blink++;
-                if (bubble.blink > 6) { // Arrête après 3 alternances (6 demi-alternances)
+                bubble.currentColor = bubble.currentColor === 'yellow' ? bubble.color : 'yellow'; // Alterne entre le jaune et la couleur finale
+                bubble.blinkCount++;
+                if (bubble.blinkCount >= 6) { // Arrête après 3 alternances (6 demi-alternances)
                     clearInterval(blinkInterval);
-                    bubble.blink = 0;
+                    bubble.currentColor = bubble.color; // Assure que la couleur finale soit correcte
                 }
             }, 250); // Clignote toutes les 0,25 secondes
         }
@@ -279,11 +279,6 @@
         function resetBubbles() {
             bubbles.length = 0;
             updateLeaderboard();
-        }
-
-        // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
-        function clearInput(input) {
-            input.value = '';
         }
 
         // Fonction pour mettre à jour les emojis en fonction du classement des donateurs
@@ -330,8 +325,8 @@
                     bubble.dy = Math.abs(bubble.dy); // Rebondir vers le bas
                 }
 
-                // Alterne entre le jaune et la couleur finale de la bulle
-                ctx.fillStyle = bubble.blink % 2 === 0 ? 'yellow' : bubble.color;
+                // Utilise la couleur courante pour le clignotement
+                ctx.fillStyle = bubble.currentColor;
                 ctx.beginPath();
                 ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 ctx.fill();
