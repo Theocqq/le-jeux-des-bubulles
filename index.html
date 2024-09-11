@@ -54,8 +54,17 @@
         }
 
         #leaderboard {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
             text-align: center;
             margin-bottom: 10px; /* Ajout d'un espace pour séparer le tableau des autres éléments */
+        }
+
+        #countdownContainer {
+            margin-right: 20px; /* Espace entre le décompte et le tableau des meilleurs joueurs */
+            text-align: right;
         }
 
         table {
@@ -131,35 +140,43 @@
     </h2>
 
     <div class="container">
-        <!-- Tableau des meilleurs joueurs -->
+        <!-- Conteneur du décompte et du tableau des meilleurs joueurs -->
         <div id="leaderboard">
-            <h3>Meilleurs Joueurs</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Classement</th>
-                        <th>Joueur</th>
-                        <th>Cadeaux</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                    <tr>
-                        <td>1 <span class="bold-text">👑</span></td>
-                        <td id="firstPlayer" class="bold-text">Aucun</td>
-                        <td id="firstAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>2 <span class="bold-text">🥈</span></td>
-                        <td id="secondPlayer" class="bold-text">Aucun</td>
-                        <td id="secondAmount">0</td>
-                    </tr>
-                    <tr>
-                        <td>3 <span class="bold-text">🥉</span></td>
-                        <td id="thirdPlayer" class="bold-text">Aucun</td>
-                        <td id="thirdAmount">0</td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Décompte -->
+            <div id="countdownContainer">
+                <h3>Nouvelle partie dans :</h3>
+                <div id="countdown">5:00</div>
+            </div>
+            <!-- Tableau des meilleurs joueurs -->
+            <div>
+                <h3>Meilleurs Joueurs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Classement</th>
+                            <th>Joueur</th>
+                            <th>Cadeaux</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td>1 <span class="bold-text">👑</span></td>
+                            <td id="firstPlayer" class="bold-text">Aucun</td>
+                            <td id="firstAmount">0</td>
+                        </tr>
+                        <tr>
+                            <td>2 <span class="bold-text">🥈</span></td>
+                            <td id="secondPlayer" class="bold-text">Aucun</td>
+                            <td id="secondAmount">0</td>
+                        </tr>
+                        <tr>
+                            <td>3 <span class="bold-text">🥉</span></td>
+                            <td id="thirdPlayer" class="bold-text">Aucun</td>
+                            <td id="thirdAmount">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Formulaire pour entrer les dons -->
@@ -208,11 +225,33 @@
         const ctx = canvas.getContext('2d');
         ctx.scale(2, 2); // Double la résolution du canvas pour plus de netteté
         const bubbles = [];
+        let countdownInterval;
+        let countdownTime = 300; // 5 minutes en secondes
 
         // Génère une couleur flashy aléatoire
         function getRandomFlashyColor() {
             const hue = Math.floor(Math.random() * 360); // Tonalité de couleur aléatoire
             return `hsl(${hue}, 100%, 50%)`; // Couleur vive avec saturation et luminosité élevées
+        }
+
+        // Fonction pour mettre à jour le décompte
+        function updateCountdown() {
+            const minutes = Math.floor(countdownTime / 60);
+            const seconds = countdownTime % 60;
+            document.getElementById('countdown').textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (countdownTime > 0) {
+                countdownTime--;
+            } else {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Fonction pour démarrer le décompte
+        function startCountdown() {
+            countdownTime = 300; // Remet à 5 minutes
+            updateCountdown();
+            clearInterval(countdownInterval); // Arrête tout intervalle existant
+            countdownInterval = setInterval(updateCountdown, 1000); // Met à jour chaque seconde
         }
 
         // Fonction pour créer une nouvelle bulle ou agrandir une bulle existante
@@ -255,10 +294,11 @@
             document.getElementById(`donationAmount${index}`).value = '0';
         }
 
-        // Fonction pour réinitialiser les bulles
+        // Fonction pour réinitialiser les bulles et redémarrer le décompte
         function resetBubbles() {
             bubbles.length = 0;
             updateLeaderboard();
+            startCountdown(); // Redémarre le décompte
         }
 
         // Fonction pour effacer le texte des champs de saisie lorsqu'on clique dessus
@@ -328,6 +368,7 @@
         }
 
         updateBubbles(); // Commencer l'animation
+        startCountdown(); // Démarrer le décompte initial
     </script>
 </body>
 </html>
