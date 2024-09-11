@@ -99,10 +99,11 @@
             margin: 0 5px; /* Espacement réduit sur les côtés */
         }
 
-        input, button {
+        input {
             margin: 2px;
-            padding: 2px 4px; /* Taille réduite des champs et boutons */
+            padding: 2px 4px; /* Taille réduite des champs */
             font-size: 12px; /* Taille de police réduite */
+            text-align: center;
         }
 
         button {
@@ -121,6 +122,15 @@
         .bold-text {
             font-weight: bold; /* Nom du joueur plus gras */
             font-size: 14px; /* Taille ajustée pour le nom du joueur */
+        }
+
+        .highlight {
+            animation: blink 0.5s alternate 3; /* Clignotement 3 fois */
+        }
+
+        @keyframes blink {
+            from { background-color: yellow; }
+            to { background-color: transparent; }
         }
 
         canvas {
@@ -185,31 +195,15 @@
 
         <!-- Formulaire pour entrer les dons -->
         <div id="donationForm">
-            <!-- Ensemble 1 -->
+            <!-- Cases de noms de donateurs -->
             <div class="donation-fields">
-                <label for="donorName1">Nom :</label>
-                <input type="text" id="donorName1" placeholder="Nom" onclick="clearInput(this)">
-                <label for="donationAmount1">Cadeaux :</label>
-                <input type="number" id="donationAmount1" min="0" step="1" value="0" placeholder="Cadeaux">
-                <button onclick="addDonation(1)">+</button>
+                <input type="text" id="donorName1" placeholder="Nom" onkeypress="handleEnter(event, 1)">
             </div>
-
-            <!-- Ensemble 2 -->
             <div class="donation-fields">
-                <label for="donorName2">Nom :</label>
-                <input type="text" id="donorName2" placeholder="Nom" onclick="clearInput(this)">
-                <label for="donationAmount2">Cadeaux :</label>
-                <input type="number" id="donationAmount2" min="0" step="1" value="0" placeholder="Cadeaux">
-                <button onclick="addDonation(2)">+</button>
+                <input type="text" id="donorName2" placeholder="Nom" onkeypress="handleEnter(event, 2)">
             </div>
-
-            <!-- Ensemble 3 -->
             <div class="donation-fields">
-                <label for="donorName3">Nom :</label>
-                <input type="text" id="donorName3" placeholder="Nom" onclick="clearInput(this)">
-                <label for="donationAmount3">Cadeaux :</label>
-                <input type="number" id="donationAmount3" min="0" step="1" value="0" placeholder="Cadeaux">
-                <button onclick="addDonation(3)">+</button>
+                <input type="text" id="donorName3" placeholder="Nom" onkeypress="handleEnter(event, 3)">
             </div>
 
             <!-- Bouton Réinitialiser -->
@@ -231,11 +225,15 @@
         const bubbles = [];
         let countdownInterval;
         let countdownTime = 300; // 5 minutes en secondes
+        let currentFieldIndex = 1;
 
-        // Génère une couleur flashy aléatoire
+        // Génère une couleur flashy aléatoire, sauf jaune
         function getRandomFlashyColor() {
-            const hue = Math.floor(Math.random() * 360); // Tonalité de couleur aléatoire
-            return `hsl(${hue}, 100%, 50%)`; // Couleur vive avec saturation et luminosité élevées
+            const hue = Math.floor(Math.random() * 360);
+            if (hue >= 50 && hue <= 70) {
+                return getRandomFlashyColor(); // Éviter les teintes jaunes
+            }
+            return `hsl(${hue}, 100%, 50%)`;
         }
 
         // Fonction pour mettre à jour le décompte
@@ -256,6 +254,30 @@
             updateCountdown();
             clearInterval(countdownInterval); // Arrête tout intervalle existant
             countdownInterval = setInterval(updateCountdown, 1000); // Met à jour chaque seconde
+        }
+
+        // Fonction pour gérer l'appui sur "Entrée"
+        function handleEnter(event, index) {
+            if (event.key === 'Enter') {
+                const inputField = document.getElementById(`donorName${index}`);
+                const value = inputField.value.trim();
+                if (value) {
+                    const [name, donationStr] = value.split(' ');
+                    const donationAmount = parseFloat(donationStr) || 0;
+                    createOrGrowBubble(name, donationAmount);
+                }
+                switchToNextField(index);
+                event.preventDefault();
+            }
+        }
+
+        // Fonction pour passer à la case suivante
+        function switchToNextField(currentIndex) {
+            const nextIndex = currentIndex % 3 + 1;
+            document.getElementById(`donorName${nextIndex}`).focus();
+            if (nextIndex === 1) {
+                document.getElementById(`donorName${currentIndex}`).value = '';
+            }
         }
 
         // Fonction pour créer une nouvelle bulle ou agrandir une bulle existante
@@ -279,10 +301,20 @@
                     emoji: ''
                 };
                 bubbles.push(bubble);
+                highlightNewBubble(bubble); // Clignotement pour les nouvelles bulles
             }
 
             updateEmojis();
             updateLeaderboard();
+        }
+
+        // Fonction pour clignoter une bulle nouvellement créée
+        function highlightNewBubble(bubble) {
+            const bubbleIndex = bubbles.indexOf(bubble);
+            bubbles[bubbleIndex].highlight = true;
+            setTimeout(() => {
+                bubbles[bubbleIndex].highlight = false;
+            }, 1500); // Clignote pendant 1,5 secondes (3 fois 0,5s)
         }
 
         // Fonction pour ajouter une bulle à partir du formulaire
@@ -356,7 +388,7 @@
 
                 ctx.beginPath();
                 ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
-                ctx.fillStyle = bubble.color;
+                ctx.fillStyle = bubble.highlight ? 'yellow' : bubble.color; // Clignotement
                 ctx.fill();
                 ctx.closePath();
                 
