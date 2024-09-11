@@ -115,15 +115,6 @@
             font-size: 14px; /* Taille ajustée pour le nom du joueur */
         }
 
-        .highlight {
-            animation: blink 0.5s alternate 3; /* Clignotement 3 fois */
-        }
-
-        @keyframes blink {
-            from { background-color: yellow; }
-            to { background-color: transparent; }
-        }
-
         canvas {
             border: 1px solid #ddd;
             background-color: white;
@@ -262,10 +253,11 @@
                     color: color,
                     dx: (Math.random() - 0.5) * 2,
                     dy: (Math.random() - 0.5) * 2,
-                    emoji: ''
+                    emoji: '',
+                    highlight: true // Drapeau pour le clignotement initial
                 };
                 bubbles.push(bubble);
-                highlightNewBubble(bubble); // Clignotement pour les nouvelles bulles
+                setTimeout(() => bubble.highlight = false, 1500); // Arrêter le clignotement après 1,5 seconde
             }
 
             updateEmojis();
@@ -281,7 +273,7 @@
             }, 1500); // Clignote pendant 1,5 secondes (3 fois 0,5s)
         }
 
-        // Fonction pour réinitialiser les bulles et redémarrer le décompte
+        // Fonction pour réinitialiser les bulles
         function resetBubbles() {
             bubbles.length = 0;
             updateLeaderboard();
@@ -336,9 +328,10 @@
                     bubble.dy = Math.abs(bubble.dy); // Rebondir vers le bas
                 }
 
+                // Alterne entre le jaune et la couleur finale de la bulle
+                ctx.fillStyle = bubble.highlight ? 'yellow' : bubble.color;
                 ctx.beginPath();
                 ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
-                ctx.fillStyle = bubble.highlight ? 'yellow' : bubble.color; // Clignotement
                 ctx.fill();
                 ctx.closePath();
                 
